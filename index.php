@@ -1,3 +1,7 @@
+<?php
+    session_start();
+    include 'admin/includes/auth.php';
+?>
 <!DOCTYPE html>
 <html>
 
@@ -44,7 +48,7 @@
           <div class="navbar-collapse-header">
             <div class="row">
               <div class="col-6 collapse-brand">
-                <a href="./client-index.html">
+                <a href="index.php">
                   <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
                 </a>
               </div>
@@ -65,10 +69,10 @@
                           <span class="nav-link-inner--text">Examples</span>
                         </a>
                         <div class="dropdown-menu">
-                          <a href="../examples/landing.html" class="dropdown-item">Landing</a>
+                          <a href="../examples/landing.php" class="dropdown-item">Landing</a>
                           <a href="../examples/profile.html" class="dropdown-item">Profile</a>
-                          <a href="../examples/login.html" class="dropdown-item">Login</a>
-                          <a href="../examples/register.html" class="dropdown-item">Register</a>
+                          <a href="../examples/login.php" class="dropdown-item">Login</a>
+                          <a href="../examples/register.php" class="dropdown-item">Register</a>
                         </div>
                       </li> -->
                   </ul>
@@ -92,10 +96,10 @@
                   <span class="nav-link-inner--text">Examples</span>
                 </a>
                 <div class="dropdown-menu">
-                  <a href="../examples/landing.html" class="dropdown-item">Landing</a>
+                  <a href="../examples/landing.php" class="dropdown-item">Landing</a>
                   <a href="../examples/profile.html" class="dropdown-item">Profile</a>
-                  <a href="../examples/login.html" class="dropdown-item">Login</a>
-                  <a href="../examples/register.html" class="dropdown-item">Register</a>
+                  <a href="../examples/login.php" class="dropdown-item">Login</a>
+                  <a href="../examples/register.php" class="dropdown-item">Register</a>
                 </div>
               </li> -->
           </ul>
@@ -128,7 +132,7 @@
                 </h1>
                 <p class="lead  text-white">This is the online scheduling of medical appointment of CLDH.</p>
                 <div class="btn-wrapper">
-                  <a href="./login.html" class="btn btn-white btn-icon mb-3 mb-sm-0">
+                  <a href="login.php" class="btn btn-white btn-icon mb-3 mb-sm-0">
                     <span class="btn-inner--icon"><i class="ni ni-book-bookmark"></i></span>
                     <span class="btn-inner--text">Set an <span style="font-weight: bold;"> APPOINMENT</span>.</span>
                   </a>

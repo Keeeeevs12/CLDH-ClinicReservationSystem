@@ -1,3 +1,24 @@
+<?php
+    session_start();
+    include 'admin/includes/auth.php';
+    include 'admin/includes/dbconnection.php';
+
+    if(isset($_POST['signup'])){
+        $full_name = $_POST['full_name'];
+        $address = $_POST['address'];
+        $bday = $_POST['bday'];
+        $email_add = $_POST['email_add'];
+        $contact_num = $_POST['contact_num'];
+        $user_type = $_POST['user_type'];
+        $password = md5('secret');
+
+        if ($query = mysqli_query($con, "INSERT INTO users (full_name, address, bday, email_add, contact_num, user_type, password) 
+                                                VALUES ('$full_name', '$address', '$bday', '$email_add', '$contact_num', '$user_type', '$password')")){
+            $transac_mes = $full_name . ' has registered as a ' . $user_type . '.';
+            $query = mysqli_query($con, "INSERT INTO transacs (transac_datetime, transac_mes, transac_user) VALUES (current_timestamp(), '$transac_mes', '$full_name')");
+        }
+    }
+?>
 <!DOCTYPE html>
 <html>
 
@@ -24,7 +45,7 @@
     <header class="header-global">
         <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
           <div class="container">
-            <a class="navbar-brand js-scroll-trigger mr-lg-5" href="./client-index.html">
+            <a class="navbar-brand js-scroll-trigger mr-lg-5" href="index.php">
               <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,20 +55,20 @@
               <div class="navbar-collapse-header">
                 <div class="row">
                   <div class="col-6 collapse-brand">
-                    <a href="./client-index.html">
+                    <a href="index.php">
                       <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
                     </a>
                   </div>
                   <div class="col-6 collapse-close">
                       <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                           <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./client-index.html">Services</a>
+                              <a class="nav-link js-scroll-trigger" href="index.php">Services</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./client-index.html">About Us</a>
+                              <a class="nav-link js-scroll-trigger" href="index.php">About Us</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./client-index.html">Contact Us</a>
+                              <a class="nav-link js-scroll-trigger" href="index.php">Contact Us</a>
                           </li>
                         <!-- <li class="nav-item dropdown">
                             <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
@@ -55,10 +76,10 @@
                               <span class="nav-link-inner--text">Examples</span>
                             </a>
                             <div class="dropdown-menu">
-                              <a href="../examples/landing.html" class="dropdown-item">Landing</a>
+                              <a href="../examples/landing.php" class="dropdown-item">Landing</a>
                               <a href="../examples/profile.html" class="dropdown-item">Profile</a>
-                              <a href="../examples/login.html" class="dropdown-item">Login</a>
-                              <a href="../examples/register.html" class="dropdown-item">Register</a>
+                              <a href="../examples/index.php" class="dropdown-item">Login</a>
+                              <a href="../examples/register.php" class="dropdown-item">Register</a>
                             </div>
                           </li> -->
                       </ul>
@@ -68,13 +89,13 @@
               <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                   <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./client-index.html">Services</a>
+                      <a class="nav-link js-scroll-trigger" href="index.php">Services</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./client-index.html">About Us</a>
+                      <a class="nav-link js-scroll-trigger" href="index.php">About Us</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./client-index.html">Contact Us</a>
+                      <a class="nav-link js-scroll-trigger" href="index.php">Contact Us</a>
                   </li>
                 <!-- <li class="nav-item dropdown">
                     <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
@@ -82,10 +103,10 @@
                       <span class="nav-link-inner--text">Examples</span>
                     </a>
                     <div class="dropdown-menu">
-                      <a href="../examples/landing.html" class="dropdown-item">Landing</a>
+                      <a href="../examples/landing.php" class="dropdown-item">Landing</a>
                       <a href="../examples/profile.html" class="dropdown-item">Profile</a>
-                      <a href="../examples/login.html" class="dropdown-item">Login</a>
-                      <a href="../examples/register.html" class="dropdown-item">Register</a>
+                      <a href="../examples/index.php" class="dropdown-item">Login</a>
+                      <a href="../examples/register.php" class="dropdown-item">Register</a>
                     </div>
                   </li> -->
               </ul>
@@ -119,13 +140,13 @@
                   <div class="text-center text-muted mb-4">
                     <small>Sign up with credentials</small>
                   </div>
-                  <form role="form" action="./login.html">
+                  <form role="form" action="" method="post">
                       <div class="form-group">
                         <div class="input-group input-group-alternative mb-3">
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                           </div>
-                          <input class="form-control" placeholder="Full Name" type="text" required autofocus>
+                          <input class="form-control"name="full_name" placeholder="Full Name" type="text" required autofocus>
                         </div>
                       </div>
                       <div class="form-group">
@@ -133,7 +154,7 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="ni ni-square-pin"></i></span>
                             </div>
-                            <input class="form-control" placeholder="Address" type="text" required autofocus>
+                            <input class="form-control" name="address" placeholder="Address" type="text" required autofocus>
                           </div>
                         </div>
                        <div class="form-group">
@@ -141,7 +162,7 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
                           </div>
-                          <input class="form-control" placeholder="Contact Number" type="number" required autofocus>
+                          <input class="form-control" name="contact_num" placeholder="Contact Number" type="number" required autofocus>
                         </div>
                       </div>
                       <div class="form-group">
@@ -149,7 +170,7 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                           </div>
-                          <input class="form-control" placeholder="Email" type="email" required autofocus>
+                          <input class="form-control" name="email_add" placeholder="Email" type="email" required autofocus>
                         </div>
                       </div>
                       <div class="form-group">
@@ -157,7 +178,7 @@
                             <div class="input-group-prepend">
                               <span class="input-group-text"><i class="ni ni-circle-08"></i></span>
                             </div>
-                            <select class="form-control form-control-alternative" name="" id="" required autofocus>
+                            <select class="form-control form-control-alternative" name="user_type" id="" required autofocus>
                                 <option value="">Select User Type</option>
                                 <option value="Patient">Patient</option>
                                 <option value="Guardian">Guardian</option>
@@ -169,7 +190,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="ni ni-calendar-grid-58"></i></span>
                                 </div>
-                                <input class="form-control datepicker" placeholder="Select date" type="text" value="06/20/2019"required autofocus >
+                                <input class="form-control datepicker" name="bday" placeholder="Select date" type="text" required autofocus >
                             </div>
                           </div>
                       <div class="form-group">
@@ -177,18 +198,18 @@
                           <div class="input-group-prepend">
                             <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                           </div>
-                          <input class="form-control" placeholder="Password" type="password" required autofocus>
+                          <input class="form-control" name="password" placeholder="Password" type="password" required autofocus>
                         </div>
                       </div>
                       <div class="text-center">
-                        <button type="button" class="btn btn-primary mt-4">Create account</button>
+                        <button type="submit" name="signup" class="btn btn-primary mt-4">Create account</button>
                       </div>
                     </form>
                 </div>
               </div>
               <div class="row mt-3">
                 <div class="col-12 text-center">
-                  <a href="./login.html" class="text-light">
+                  <a href="login.php" class="text-light">
                     <i class="ni ni-bold-left"></i>
                     <small>Back to login</small>
                   </a>

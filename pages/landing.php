@@ -1,3 +1,15 @@
+<?php
+    session_start();
+    include '../admin/includes/unauth.php';
+    include '../admin/includes/dbconnection.php';
+
+    if (isset($_POST['logout'])) {
+        session_unset();
+        session_destroy();
+        header('Refresh: 0, url = /CLDH-ClinicReservationSystem/');
+        //header("location: $path/login.php");
+    }
+?>
 <!DOCTYPE html>
 <html>
 
@@ -52,6 +64,7 @@
                 </a>
               </div>
               <div class="col-6 collapse-close">
+                  <form action="" method="post">
                   <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                       <li class="nav-item">
                           <a class="nav-link js-scroll-trigger" href="#services">Services</a>
@@ -66,13 +79,15 @@
                           <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="../login.html">Logout</a>
+                          <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
                       </li>
                   </ul>
+                  </form>
               </div>
             </div>
           </div>
           <div class="collapse navbar-collapse" id="navbarResponsive">
+              <form action="" method="post">
           <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
               <li class="nav-item">
                   <a class="nav-link js-scroll-trigger" href="#services">Services</a>
@@ -87,9 +102,10 @@
                   <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="../login.html">Logout</a>
+                  <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
               </li>
           </ul>
+              </form>
         </div>
         </div>
       </div>
@@ -127,7 +143,6 @@
     </div>
 
     <!-- Clinics -->
-
      <section class="section section-lg pt-lg-0 bg-secondary" id="services">
         <div class="container ">
             <div class="row justify-content-center">
@@ -155,9 +170,14 @@
                   </div>
               </div>
           </div>
+
           <div class="row justify-content-center" id="myItems">
             <div class="col-lg-12">
               <div class="row row-grid">
+                  <?php
+                  $query = mysqli_query($con, "SELECT * FROM sec_accnts");
+                  while ($rows = mysqli_fetch_assoc($query)) {
+                  ?>
                 <div class="col-lg-4 pb-20">
                   <div class="card card-lift--hover shadow border-0">
                     <div class="card-body py-5 text-center">
@@ -165,96 +185,14 @@
                             <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
                         </div>
                       <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">Pediatrics</h6>
+                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;"><?php echo $rows['clinic']; ?></h6>
                       <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
                       <div>
                     </div>
                   </div>
                 </div>
                 </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
-                    <div class="card-body py-5 text-center">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">Cardiology</h6>
-                      <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
-                    <div class="card-body py-5 text-center">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">Optalmology</h6>
-                      <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
-                    <div class="card-body py-5 text-center">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">Surgery</h6>
-                      <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
-                    <div class="card-body py-5 text-center">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">Neuro Surgery</h6>
-                      <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
-                    <div class="card-body py-5 text-center">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">Eurology</h6>
-                      <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0" >
-                    <div class="card-body py-5 text-center" style="display:none">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold; display: none;">NOT FOUND</h6>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
+                  <?php } ?>
               </div>
             </div>
           </div>

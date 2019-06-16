@@ -1,3 +1,61 @@
+<?php
+    session_start();
+    include 'admin/includes/auth.php';
+    include 'admin/includes/dbconnection.php';
+
+    if ( isset($_POST['signin']) ) {
+        if (empty($_POST['contact_num']) || empty($_POST['password'])) {
+            echo '<script>alert("Both Fields are required.")</script>';
+        }
+        else {
+            $contact_num = mysqli_real_escape_string($con, $_POST['contact_num']);
+            $password = mysqli_real_escape_string($con, $_POST['password']);
+            $hshpsw = md5($password);
+
+            $query = mysqli_query($con,"SELECT * FROM users WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
+            $rows = mysqli_fetch_assoc($query);
+            $num=mysqli_num_rows($query);
+            if ($num == 1) {
+                $_SESSION['contact_num']=$rows['contact_num'];
+                $_SESSION['full_name']=$rows['full_name'];
+                $_SESSION['address']=$rows['address'];
+                $_SESSION['bday']=$rows['bday'];
+                $_SESSION['user_type']=$rows['user_type'];
+                $_SESSION['email_add']=$rows['email_add'];
+                $_SESSION['patients_id']=$rows['patients_id'];
+                header( "Location: pages/landing.php");
+            }
+
+            $query1 = mysqli_query($con,"SELECT * FROM sec_accnts WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
+            $rows1 = mysqli_fetch_assoc($query1);
+            $num1=mysqli_num_rows($query1);
+            if ($num1 == 1) {
+                $_SESSION['contact_num']=$rows1['contact_num'];
+                $_SESSION['full_name']=$rows1['full_name'];
+                $_SESSION['email_add']=$rows1['email_add'];
+                $_SESSION['sec_id']=$rows1['sec_id'];
+                $_SESSION['clinic']=$rows1['clinic'];
+                header( "Location: admin/index-sec.php");
+            }
+
+            $query2 = mysqli_query($con,"SELECT * FROM admin_accnt WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
+            $rows2 = mysqli_fetch_assoc($query2);
+            $num2=mysqli_num_rows($query2);
+            if ($num2 == 1) {
+                $_SESSION['contact_num']=$rows2['contact_num'];
+                $_SESSION['full_name']=$rows2['full_name'];
+                $_SESSION['admin_id']=$rows2['admin_id'];
+                header( "Location: admin/index-admin.php");
+            }
+
+            else
+            {
+
+                $error = "Contact Number or Password is invalid";
+            }
+        }
+}
+?>
 <!DOCTYPE html>
 <html>
 
@@ -24,7 +82,7 @@
     <header class="header-global">
         <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
           <div class="container">
-            <a class="navbar-brand js-scroll-trigger mr-lg-5" href="./client-index.html">
+            <a class="navbar-brand js-scroll-trigger mr-lg-5" href="index.php">
               <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
@@ -34,20 +92,20 @@
               <div class="navbar-collapse-header">
                 <div class="row">
                   <div class="col-6 collapse-brand">
-                    <a href="./client-index.html">
+                    <a href="index.php">
                       <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
                     </a>
                   </div>
                   <div class="col-6 collapse-close">
                       <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                           <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./client-index.html">Services</a>
+                              <a class="nav-link js-scroll-trigger" href="index.php">Services</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./client-index.html">About Us</a>
+                              <a class="nav-link js-scroll-trigger" href="index.php">About Us</a>
                           </li>
                           <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./client-index.html">Contact Us</a>
+                              <a class="nav-link js-scroll-trigger" href="index.php">Contact Us</a>
                           </li>
                         <!-- <li class="nav-item dropdown">
                             <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
@@ -57,7 +115,7 @@
                             <div class="dropdown-menu">
                               <a href="../examples/landing.html" class="dropdown-item">Landing</a>
                               <a href="../examples/profile.html" class="dropdown-item">Profile</a>
-                              <a href="../examples/login.html" class="dropdown-item">Login</a>
+                              <a href="../examples/index.php" class="dropdown-item">Login</a>
                               <a href="../examples/register.html" class="dropdown-item">Register</a>
                             </div>
                           </li> -->
@@ -68,13 +126,13 @@
               <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                   <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./client-index.html">Services</a>
+                      <a class="nav-link js-scroll-trigger" href="index.php">Services</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./client-index.html">About Us</a>
+                      <a class="nav-link js-scroll-trigger" href="index.php">About Us</a>
                   </li>
                   <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./client-index.html">Contact Us</a>
+                      <a class="nav-link js-scroll-trigger" href="index.php">Contact Us</a>
                   </li>
                 <!-- <li class="nav-item dropdown">
                     <a href="#" class="nav-link" data-toggle="dropdown" href="#" role="button">
@@ -84,7 +142,7 @@
                     <div class="dropdown-menu">
                       <a href="../examples/landing.html" class="dropdown-item">Landing</a>
                       <a href="../examples/profile.html" class="dropdown-item">Profile</a>
-                      <a href="../examples/login.html" class="dropdown-item">Login</a>
+                      <a href="../examples/index.php" class="dropdown-item">Login</a>
                       <a href="../examples/register.html" class="dropdown-item">Register</a>
                     </div>
                   </li> -->
@@ -119,13 +177,13 @@
                 <div class="text-center text-muted mb-4">
                   <small>Sign in with credentials</small>
                 </div>
-                <form role="form" action="./landing.html">
+                <form role="form" action="" method="post">
                   <div class="form-group mb-3">
                     <div class="input-group input-group-alternative">
                       <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="ni ni-email-83"></i></span>
+                        <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
                       </div>
-                      <input class="form-control" placeholder="Email" type="email">
+                      <input class="form-control" name="contact_num" placeholder="Contact Number" type="number" required autofocus>
                     </div>
                   </div>
                   <div class="form-group">
@@ -133,18 +191,18 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                       </div>
-                      <input class="form-control" placeholder="Password" type="password">
+                      <input class="form-control" name="password" placeholder="Password" type="password" required autofocus>
                     </div>
                   </div>
                   <div class="text-center">
-                    <button type="button" class="btn btn-primary my-4">Sign in</button>
+                    <button type="submit" name="signin" class="btn btn-primary my-4">Sign in</button>
                   </div>
                 </form>
               </div>
             </div>
             <div class="row mt-3">
               <div class="col-12 text-center">
-                <a href="./register.html" class="text-light">
+                <a href="register.php" class="text-light">
                   <small>Create new account</small>
                 </a>
               </div>
