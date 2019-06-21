@@ -11,10 +11,12 @@
         $contact_num = $_POST['contact_num'];
         $user_type = $_POST['user_type'];
         $password = md5('secret');
-
-        if ($query = mysqli_query($con, "INSERT INTO users (full_name, address, bday, email_add, contact_num, user_type, password) 
-                                                VALUES ('$full_name', '$address', '$bday', '$email_add', '$contact_num', '$user_type', '$password')")){
-            $transac_mes = $full_name . ' has registered as a ' . $user_type . '.';
+		$chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIFJKLMNOPQRSTUVWXYZ";
+		$ver_code = substr(str_shuffle($chars), 0, 8);
+		
+        if ($query = mysqli_query($con, "INSERT INTO users (full_name, address, bday, email_add, contact_num, user_type, password, ver_code) 
+                                                VALUES ('$full_name', '$address', '$bday', '$email_add', '$contact_num', '$user_type', '$password', $ver_code')")){
+			$transac_mes = $full_name . ' has registered as a ' . $user_type . '.';
             $query = mysqli_query($con, "INSERT INTO transacs (transac_datetime, transac_mes, transac_user) VALUES (current_timestamp(), '$transac_mes', '$full_name')");
         }
     }

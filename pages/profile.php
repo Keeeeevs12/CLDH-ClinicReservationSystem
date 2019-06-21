@@ -1,3 +1,50 @@
+<?php
+    session_start();
+    include '../admin/includes/unauth.php';
+    include '../admin/includes/dbconnection.php';
+
+	auth_user();
+	
+	if(!$_SESSION['status'] == '1') {
+		header("Location: verify.php");
+	}
+	
+	$user_name = $_SESSION['full_name'];
+    $user_id = $_SESSION['patients_id'];
+
+    if (isset($_POST['logout'])) {
+        session_unset();
+        session_destroy();
+        header("Location: ../login.php");
+    }
+	
+	if (isset($_POST['user_edit'])) {
+        $n_full_name = $_POST['n_full_name'];
+        $n_email_add = $_POST['n_email_add'];
+        $n_contact_num = $_POST['n_contact_num'];
+        $n_user_type = $_POST['n_user_type'];
+        $n_password = md5($_POST['n_password']);
+        $n_c_password = md5($_POST['n_c_password']);
+		
+        if ($n_password == $n_c_password) {
+            if ($query = mysqli_query($con, "UPDATE users SET full_name = '$n_full_name', email_add = '$n_email_add', contact_num = '$n_contact_num', user_type = '$n_user_type', password = '$n_password' WHERE users.patients_id = '$user_id'")){
+                
+				$_SESSION['contact_num']=$n_contact_num;
+                $_SESSION['full_name']=$n_full_name;
+                $_SESSION['email_add']=$n_email_add;
+                $_SESSION['user_type']=$n_user_type;
+				$user_name = $_SESSION['full_name'];
+				
+				$transac_mes = $user_name . ' has edited his/her informations.';
+                $query1 = mysqli_query($con, "INSERT INTO transacs (transac_datetime, transac_mes, transac_user) VALUES (current_timestamp(), '$transac_mes', '$user_name')");
+            }
+        }
+        //else {
+            // failed :(
+        //}
+    }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -6,9 +53,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta name="description" content="Start your development with a Design System for Bootstrap 4.">
   <meta name="author" content="Creative Tim">
-  <title>Argon Design System - Free Design System for Bootstrap 4</title>
+  <title>CLDH Clinic Reservation</title>
   <!-- Favicon -->
-  <link href="../assets/img/brand/favicon.png" rel="icon" type="image/png">
+  <link href="../assets/img/brand/logocldh.png" rel="icon" type="image/png">
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
   <!-- Icons -->
@@ -18,6 +65,19 @@
   <link type="text/css" href="../assets/css/argon.css?v=1.0.1" rel="stylesheet">
   <!-- Docs CSS -->
   <link type="text/css" href="../assets/css/docs.min.css" rel="stylesheet">
+
+  <style type="text/css" rel="stylesheet">
+    .back-to-top {
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    display:none;
+}
+    .pb-20 {
+      padding-bottom: 20px;
+    }
+  </style>
 </head>
 
 <body>
@@ -39,44 +99,48 @@
                     </a>
                   </div>
                   <div class="col-6 collapse-close">
-                      <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
-                          <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="landing.php">Services</a>
-                          </li>
-                          <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="landing.php">About Us</a>
-                          </li>
-                          <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="landing.php">Contact Us</a>
-                          </li>
-                          <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
-                          </li>
-                          <li class="nav-item">
-                              <a class="nav-link js-scroll-trigger" href="../login.php">Logout</a>
-                          </li>
-                      </ul>
+                      <form action="" method="post">
+                  <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
+                      </li>
+                  </ul>
+                  </form>
                   </div>
                 </div>
               </div>
               <div class="collapse navbar-collapse" id="navbarResponsive">
-              <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
-                  <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="landing.php">Services</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="landing.php">About Us</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="landing.php">Contact Us</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
-                  </li>
-                  <li class="nav-item">
-                      <a class="nav-link js-scroll-trigger" href="../login.php">Logout</a>
-                  </li>
-              </ul>
+              <form action="" method="post">
+                  <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
+                      </li>
+                  </ul>
+                  </form>
             </div>
             </div>
           </div>
@@ -99,7 +163,7 @@
             <div class="row" style="padding-top: 55px;">
               <div class="col-lg-8">
                 <h1 class="display-3  text-white">WELCOME!
-                  <span class="text-white">INSERT USER NAME</span>
+                  <span class="text-white"><?php echo $_SESSION['full_name']; ?></span>
                 </h1>
               </div>
             </div>
@@ -119,20 +183,20 @@
             <div class="row justify-content-center">
               <div class="col order-lg-3 align-self-lg-center">
                   <div class="card-body">
-                      <form>
+                      <form action="" method="post">
                         <h6 class="heading-small text-muted mb-4">User information</h6>
                         <div class="pl-lg-4">
                           <div class="row">
                             <div class="col-lg-6">
                               <div class="form-group">
                                 <label class="form-control-label" for="">Full Name:</label>
-                                <input type="text" id="" class="form-control form-control-alternative" placeholder="Joshua" value="Joshua Miguel Manalo" required autofocus>
+                                <input type="text" id="" name="n_full_name" value="<?php echo $_SESSION['full_name'];?>" class="form-control form-control-alternative" placeholder="Joshua" required autofocus>
                               </div>
                             </div>
                             <div class="col-lg-6">
                                 <div class="form-group">
                                   <label class="form-control-label" for="">Contact Number:</label>
-                                  <input type="number" id="" class="form-control form-control-alternative" placeholder="Contact Number" value="09667629830" required autofocus>
+                                  <input type="text" name="n_contact_num" id="" value="<?php echo $_SESSION['contact_num'];?>" class="form-control form-control-alternative" placeholder="Contact Number" required autofocus>
                                 </div>
                               </div>
                           </div>
@@ -140,16 +204,16 @@
                             <div class="col-lg-6">
                               <div class="form-group">
                                 <label class="form-control-label" for="">Email Address:</label>
-                                <input type="email" id="" class="form-control form-control-alternative" placeholder="Email" value="joshmanalo@gmail.com" required autofocus>
+                                <input type="email" name="n_email_add" id="" value="<?php echo $_SESSION['email_add'];?>" class="form-control form-control-alternative" placeholder="Email" required autofocus>
                               </div>
                             </div>
                             <div class="col-lg-6">
                               <div class="form-group">
                                   <label class="form-control-label">User Type:</label>
-                                  <select class="form-control form-control-alternative" name="" id="" required autofocus>
+                                  <select class="form-control form-control-alternative" name="n_user_type" id="" required autofocus>
                                       <option value="">Select User Type</option>
-                                      <option value="Patient">Patient</option>
-                                      <option value="Guardian">Guardian</option>
+                                      <option <?php if ($_SESSION['user_type'] == 'Patient' ) echo 'selected' ; ?> value="Patient">Patient</option>
+                                      <option <?php if ($_SESSION['user_type'] == 'Guardian' ) echo 'selected' ; ?> value="Guardian">Guardian</option>
                                   </select>
                               </div>
                             </div>
@@ -161,21 +225,21 @@
                           <div class="row">
                             <div class="col-lg-6">
                               <div class="form-group">
-                                <label class="form-control-label" for="">Passoword</label>
-                                <input type="password" id="" class="form-control form-control-alternative" placeholder="" value="sec123" required autofocus>
+                                <label class="form-control-label" for="">Password</label>
+                                <input type="password" name="n_password" id="" class="form-control form-control-alternative" placeholder="******" required autofocus>
                               </div>
                             </div>
                             <div class="col-lg-6">
                               <div class="form-group">
                                 <label class="form-control-label" for="">Confirm Password</label>
-                                <input type="password" id="" class="form-control form-control-alternative" placeholder="" value="sec123" required autofocus>
+                                <input type="password" name="n_c_password" id="" class="form-control form-control-alternative" placeholder="******" required autofocus>
                               </div>
                             </div>
                           </div>
                         </div>
                         </div>
                             <div class="modal-footer">
-                              <button type="submit" class="btn btn-success">Save Changes</button>
+                              <button type="submit" name="user_edit" class="btn btn-success">Save Changes</button>
                           </div>
                       </form>
                     </div>

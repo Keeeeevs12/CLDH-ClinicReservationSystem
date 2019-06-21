@@ -1,3 +1,26 @@
+<?php
+    session_start();
+    include '../admin/includes/unauth.php';
+    include '../admin/includes/dbconnection.php';
+
+	auth_user();
+	
+	if(!$_SESSION['status'] == '1') {
+		header("Location: verify.php");
+	}
+
+	$req_id = $_REQUEST['id'];
+	
+	$query_clinicname = mysqli_query($con,"SELECT * FROM clinic  WHERE clinic_id = '$req_id'");
+	$rows_clinicname = mysqli_fetch_assoc($query_clinicname);
+
+    if (isset($_POST['logout'])) {
+        session_unset();
+        session_destroy();
+        header("Location: ../login.php");
+    }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -52,45 +75,48 @@
                 </a>
               </div>
               <div class="col-6 collapse-close">
+                  <form action="" method="post">
                   <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="landing.php">Services</a>
+                          <a class="nav-link js-scroll-trigger" href="#services">Services</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="landing.php">About Us</a>
+                          <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="landing.php">Contact Us</a>
+                          <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
+                          <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="../login.php">Logout</a>
+                          <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
                       </li>
                   </ul>
+                  </form>
               </div>
             </div>
           </div>
           <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
-              <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="landing.php">Services</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="landing.php">About Us</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="landing.php">Contact Us</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="../login.php">Logout</a>
-              </li>
-          </ul>
-        </div>
+          <form action="" method="post">
+                  <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
+                      </li>
+                  </ul>
+                  </form>
         </div>
       </div>
     </nav>
@@ -114,8 +140,8 @@
           <div class="col px-0">
             <div class="row">
               <div class="col-lg-8">
-                <h1 class="display-3  text-white">WELCOME!
-                  <span class="text-white">Input Clinic Name</span>
+                <h1 class="display-3  text-white">WELCOME TO CLINIC:
+                  <span class="text-white"><?php echo $rows_clinicname["clinic_name"]; ?></span>
                 </h1>
                 <p class="lead  text-white">This is the online scheduling of medical appointment of CLDH.</p>
               </div>
@@ -130,11 +156,20 @@
 
      <section class="section section-lg pt-lg-0 bg-secondary">
         <div class="container ">
+			<div class="row justify-content-center">
+                <div class="col-lg-12">
+                    <div class="row row-grid justify-content-center" style="padding-top: 30px;">
+                        <div class="col-lg-8 text-center">
+						<a href="./landing.php"><button class="btn btn-1 btn-outline-danger" type="submit">Go Back</button></a>
+                          </div>
+                    </div>
+                </div>
+            </div>
             <div class="row justify-content-center">
                 <div class="col-lg-12">
                     <div class="row row-grid justify-content-center" style="padding-top: 30px;">
                         <div class="col-lg-8 text-center">
-                          <h2 class="display-3" style="padding-bottom: 30px;"><i class="ni ni-calendar-grid-58" aria-hidden="true"></i> Doctor's Schedule</h2>
+                          <h2 class="display-3" style="padding-bottom: 30px;"><i class="ni ni-calendar-grid-58" aria-hidden="true"></i> Doctors</h2>
                           </div>
                     </div>
                 </div>
@@ -158,6 +193,10 @@
           <div class="row justify-content-center" id="myItems">
             <div class="col-lg-12">
               <div class="row row-grid">
+                <?php
+                $query_fetchdoc = mysqli_query($con, "SELECT * FROM sec_accnts WHERE sec_accnts.clinic_id = '$req_id'");
+                while ($rows_fetchdoc = mysqli_fetch_assoc($query_fetchdoc)) {
+				?>
                 <div class="col-lg-4 pb-20">
                   <div class="card card-lift--hover shadow border-0">
                     <div class="card-body py-5 text-center">
@@ -165,41 +204,14 @@
                             <i class="ni ni-circle-08" aria-hidden="true"></i>
                         </div>
                       <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">DR. NO NAME</h6>
-                      <button class="btn btn-1 btn-outline-info" type="button" data-toggle="modal" data-target="#modalSched">View Doctor's Schedule</button>
+                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">DR. <?php echo $rows_fetchdoc['doc_name']; ?></h6>
+                      <a href="./reserve-sched.php?id=<?php echo $req_id; ?>&docid=<?php echo $rows_fetchdoc['sec_id']; ?>"><button class="btn btn-1 btn-outline-info" type="button">View Doctor's Schedule</button></a>
                       <div>
                     </div>
                   </div>
                 </div>
                 </div>
-                <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
-                    <div class="card-body py-5 text-center">
-                        <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                            <i class="ni ni-circle-08" aria-hidden="true"></i>
-                        </div>
-                      <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">DR. NO NAME</h6>
-                      <button class="btn btn-1 btn-outline-info" type="button" data-toggle="modal" data-target="#modalSched">View Doctor's Schedule</button>
-                      <div>
-                    </div>
-                  </div>
-                </div>
-                </div>
-                <div class="col-lg-4 pb-20">
-                    <div class="card card-lift--hover shadow border-0">
-                      <div class="card-body py-5 text-center">
-                          <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
-                              <i class="ni ni-circle-08" aria-hidden="true"></i>
-                          </div>
-                        <br>
-                        <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;">DR. Ivan Badbaden</h6>
-                        <button class="btn btn-1 btn-outline-info" type="button" data-toggle="modal" data-target="#modalSched">View Doctor's Schedule</button>
-                        <div>
-                      </div>
-                    </div>
-                  </div>
-                  </div>
+				<?php } ?>
               </div>
             </div>
           </div>

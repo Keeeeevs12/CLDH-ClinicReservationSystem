@@ -23,18 +23,24 @@
                 $_SESSION['user_type']=$rows['user_type'];
                 $_SESSION['email_add']=$rows['email_add'];
                 $_SESSION['patients_id']=$rows['patients_id'];
-                header( "Location: pages/landing.php");
+                $_SESSION['status']=$rows['status'];
+                if($_SESSION['status'] == '1') {
+					header("Location: pages/landing.php");
+				} else {
+					header("Location: pages/verify.php");
+				}
             }
 
             $query1 = mysqli_query($con,"SELECT * FROM sec_accnts WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
             $rows1 = mysqli_fetch_assoc($query1);
             $num1=mysqli_num_rows($query1);
             if ($num1 == 1) {
+				$_SESSION['sec_id']=$rows1['sec_id'];
+                $_SESSION['clinic_id']=$rows1['clinic_id'];
+				$_SESSION['sec_name']=$rows1['sec_name'];
+                $_SESSION['doc']=$rows1['doc'];
                 $_SESSION['contact_num']=$rows1['contact_num'];
-                $_SESSION['full_name']=$rows1['full_name'];
                 $_SESSION['email_add']=$rows1['email_add'];
-                $_SESSION['sec_id']=$rows1['sec_id'];
-                $_SESSION['clinic']=$rows1['clinic'];
                 header( "Location: admin/index-sec.php");
             }
 

@@ -3,11 +3,16 @@
     include '../admin/includes/unauth.php';
     include '../admin/includes/dbconnection.php';
 
+	auth_user();
+	
+	if(!$_SESSION['status'] == '1') {
+		header("Location: verify.php");
+	}
+	
     if (isset($_POST['logout'])) {
         session_unset();
         session_destroy();
-        header('Refresh: 0, url = /CLDH-ClinicReservationSystem/');
-        //header("location: $path/login.php");
+        header("Location: ../login.php");
     }
 ?>
 <!DOCTYPE html>
@@ -76,7 +81,7 @@
                           <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
+                          <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -99,7 +104,7 @@
                   <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
               </li>
               <li class="nav-item">
-                  <a class="nav-link js-scroll-trigger" href="./profile.html">Profile</a>
+                  <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -175,7 +180,7 @@
             <div class="col-lg-12">
               <div class="row row-grid">
                   <?php
-                  $query = mysqli_query($con, "SELECT * FROM sec_accnts");
+                  $query = mysqli_query($con, "SELECT * FROM clinic");
                   while ($rows = mysqli_fetch_assoc($query)) {
                   ?>
                 <div class="col-lg-4 pb-20">
@@ -185,8 +190,8 @@
                             <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
                         </div>
                       <br>
-                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;"><?php echo $rows['clinic']; ?></h6>
-                      <a href="./clinic-sched.html"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
+                      <h6 class="card-title text-primary text-uppercase" style="font-weight: bold;"><?php echo $rows['clinic_name']; ?></h6>
+                      <a href="clinic-sched.php?id=<?php echo $rows["clinic_id"]; ?>"><button class="btn btn-1 btn-outline-info" type="button">View Doctors</button></a>
                       <div>
                     </div>
                   </div>
@@ -323,50 +328,7 @@
 
     <!-- About Us -->
 
-    <section class="section section-shaped" id="about">
-        <div class="shape shape-style-1 shape-default">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div class="container py-md">
-          <div class="row justify-content-between align-items-center">
-            <div class="col-lg-5 mb-5 mb-lg-0">
-              <h1 class="text-white font-weight-bold">MedArt History</h1>
-              <p class="lead text-white mt-4">Central Luzon Doctors' Hospital is a private 175-bed tertiary-level training hospital located along Hospital Drive, Barangay San Vicente, Tarlac City, Tarlac, Philippines. CLDH is accredited by the Department of Health (DOH) and by the Philippine Health Insurance Corporation (PhilHealth).
-                 CLDH is a proud member of the Private Hospitals Association of the Philippines (PHAP) and the Philippine Hospital Association (PHA), and recently the Institute for Healthcare Improvement (IHI).</p>
-            </div>
-            <div class="col-lg-6 mb-lg-auto">
-              <div class="rounded shadow-lg overflow-hidden transform-perspective-right">
-                <div id="carousel_example" class="carousel slide" data-ride="carousel">
-                  <ol class="carousel-indicators">
-                    <li data-target="#carousel_example" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel_example" data-slide-to="1"></li>
-                  </ol>
-                  <div class="carousel-inner">
-                    <div class="carousel-item active">
-                      <img class="img-fluid" src="../assets/img/theme/history.png" alt="First slide">
-                    </div>
-                  </div>
-                  <a class="carousel-control-prev" href="#carousel_example" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                  <a class="carousel-control-next" href="#carousel_example" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </section>
-
-        <section class="section bg-secondary">
+        <section class="section bg-secondary" id="about">
             <div class="container">
               <div class="row row-grid align-items-center">
                 <div class="col-md-6">
