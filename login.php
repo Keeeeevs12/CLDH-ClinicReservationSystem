@@ -15,7 +15,16 @@
             $query = mysqli_query($con,"SELECT * FROM users WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
             $rows = mysqli_fetch_assoc($query);
             $num=mysqli_num_rows($query);
-            if ($num == 1) {
+
+            $query1 = mysqli_query($con,"SELECT * FROM sec_accnts WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
+            $rows1 = mysqli_fetch_assoc($query1);
+            $num1=mysqli_num_rows($query1);
+			
+            $query2 = mysqli_query($con,"SELECT * FROM admin_accnt WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
+            $rows2 = mysqli_fetch_assoc($query2);
+            $num2=mysqli_num_rows($query2);
+			
+			if ($num == 1) {
                 $_SESSION['contact_num']=$rows['contact_num'];
                 $_SESSION['full_name']=$rows['full_name'];
                 $_SESSION['address']=$rows['address'];
@@ -23,41 +32,36 @@
                 $_SESSION['user_type']=$rows['user_type'];
                 $_SESSION['email_add']=$rows['email_add'];
                 $_SESSION['patients_id']=$rows['patients_id'];
-                $_SESSION['status']=$rows['status'];
+				$_SESSION['status']=$rows['user_status'];
+				$_SESSION['ver_code']=$rows['ver_code'];
                 if($_SESSION['status'] == '1') {
 					header("Location: pages/landing.php");
 				} else {
-					header("Location: pages/verify.php");
+					header("Location: verification.php");
 				}
-            }
-
-            $query1 = mysqli_query($con,"SELECT * FROM sec_accnts WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
-            $rows1 = mysqli_fetch_assoc($query1);
-            $num1=mysqli_num_rows($query1);
-            if ($num1 == 1) {
+            } else if ($num1 == 1) {
 				$_SESSION['sec_id']=$rows1['sec_id'];
                 $_SESSION['clinic_id']=$rows1['clinic_id'];
 				$_SESSION['sec_name']=$rows1['sec_name'];
-                $_SESSION['doc']=$rows1['doc'];
+                $_SESSION['doc_name']=$rows1['doc_name'];
                 $_SESSION['contact_num']=$rows1['contact_num'];
                 $_SESSION['email_add']=$rows1['email_add'];
                 header( "Location: admin/index-sec.php");
-            }
-
-            $query2 = mysqli_query($con,"SELECT * FROM admin_accnt WHERE contact_num = '$contact_num' AND password = '$hshpsw'");
-            $rows2 = mysqli_fetch_assoc($query2);
-            $num2=mysqli_num_rows($query2);
-            if ($num2 == 1) {
+            } else if ($num2 == 1) {
                 $_SESSION['contact_num']=$rows2['contact_num'];
                 $_SESSION['full_name']=$rows2['full_name'];
                 $_SESSION['admin_id']=$rows2['admin_id'];
                 header( "Location: admin/index-admin.php");
-            }
+            } else {
 
-            else
-            {
-
-                $error = "Contact Number or Password is invalid";
+                $error = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <span class="alert-inner--icon"><i class="ni ni-fat-remove"></i></span>
+                                <span class="alert-inner--text"><strong>WRONG</strong> contact nummber or password.</span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>';
+               
             }
         }
 }
@@ -89,7 +93,7 @@
         <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
           <div class="container">
             <a class="navbar-brand js-scroll-trigger mr-lg-5" href="index.php">
-              <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
+              <p class="text-white" style="font-weight: bold; font-size: 30px;"><img src="./assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -99,7 +103,7 @@
                 <div class="row">
                   <div class="col-6 collapse-brand">
                     <a href="index.php">
-                      <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
+                      <p class="text-primary" style="font-weight: bold; font-size: 30px;"><img src="./assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
                     </a>
                   </div>
                   <div class="col-6 collapse-close">
@@ -173,10 +177,12 @@
       <div class="container pt-lg-md">
         <div class="row justify-content-center">
           <div class="col-lg-5">
+            <?php echo $error; ?> 
             <div class="card bg-secondary shadow border-0">
               <div class="card-header bg-white pb-0">
                 <div class="text-muted text-center mb-0">
-                      <p class="text-primary" style="font-weight: bold; font-size: 20px;">CLDH Online Scheduling for Medical Appointment System</p>
+                        <img src="./assets/img/brand/logocldh-1.png" style="height: 70px; width: 70px;">
+                      <p class="text-primary" style="font-weight: bold; font-size: 16px;">CLDH Online Scheduling for Medical Appointment System</p>
                 </div>
               </div>
               <div class="card-body px-lg-5 py-lg-5">
@@ -189,7 +195,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text"><i class="ni ni-mobile-button"></i></span>
                       </div>
-                      <input class="form-control" name="contact_num" placeholder="Contact Number" type="number" required autofocus>
+                      <input class="form-control" name="contact_num" placeholder="Contact Number" type="text" required autofocus>
                     </div>
                   </div>
                   <div class="form-group">
@@ -300,6 +306,14 @@
   <script src="./assets/vendor/headroom/headroom.min.js"></script>
   <!-- Argon JS -->
   <script src="./assets/js/argon.js?v=1.0.1"></script>
+
+   <script>
+        window.setTimeout(function() {
+    $(".alert").fadeTo(400, 0).slideUp(400, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+    </script>
 </body>
 
 </html>

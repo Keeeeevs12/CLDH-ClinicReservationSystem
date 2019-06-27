@@ -6,7 +6,7 @@
 	auth_user();
 	
 	if(!$_SESSION['status'] == '1') {
-		header("Location: verify.php");
+		header("Location: ../verification.php");
 	}
 	
 	$user_name = $_SESSION['full_name'];
@@ -15,7 +15,7 @@
     if (isset($_POST['logout'])) {
         session_unset();
         session_destroy();
-        header("Location: ../login.php");
+        header("Location: http://www.cldhclinicreservation.epizy.com/login.php");
     }
 	
 	if (isset($_POST['user_edit'])) {
@@ -36,9 +36,17 @@
 				$user_name = $_SESSION['full_name'];
 				
 				$transac_mes = $user_name . ' has edited his/her informations.';
-                $query1 = mysqli_query($con, "INSERT INTO transacs (transac_datetime, transac_mes, transac_user) VALUES (current_timestamp(), '$transac_mes', '$user_name')");
+                $query1 = mysqli_query($con, "INSERT INTO transacs (transac_datetime, transac_mes, transac_user, user_type) VALUES (current_timestamp(), '$transac_mes', '$user_name', 'Client/Patient')");
             }
         }
+         $success = '<div class="alert alert-success alert-dismissible fade show" role="alert" id="succ">
+                            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
+                                <span class="alert-inner--text">You have <strong>SUCCESSFULLY</strong> edited your informations.</span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>';
+        
         //else {
             // failed :(
         //}
@@ -85,7 +93,7 @@
         <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
           <div class="container">
             <a class="navbar-brand js-scroll-trigger mr-lg-5" href="#page-top">
-              <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
+              <p class="text-white" style="font-weight: bold; font-size: 30px;"><img src="../assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -95,23 +103,26 @@
                 <div class="row">
                   <div class="col-6 collapse-brand">
                     <a href="./client-index.html">
-                      <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
+                      <p class="text-primary" style="font-weight: bold; font-size: 30px;"><img src="../assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
                     </a>
                   </div>
                   <div class="col-6 collapse-close">
                       <form action="" method="post">
                   <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+                          <a class="nav-link js-scroll-trigger" href="./landing.php">Services</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
+                          <a class="nav-link js-scroll-trigger" href="./landing.php">About Us</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="./my-appointments.php">My Appointments</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -125,16 +136,19 @@
               <form action="" method="post">
                   <ul class="navbar-nav navbar-nav-hover align-items-lg-center">
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="#services">Services</a>
+                          <a class="nav-link js-scroll-trigger" href="./landing.php">Services</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="#about">About Us</a>
+                          <a class="nav-link js-scroll-trigger" href="./landing.php">About Us</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link js-scroll-trigger" href="#contact">Contact Us</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="./my-appointments.php">My Appointments</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -161,10 +175,11 @@
       <div class="container py-lg-md d-flex">
           <div class="col px-0">
             <div class="row" style="padding-top: 55px;">
-              <div class="col-lg-8">
+              <div class="col-lg-12">
                 <h1 class="display-3  text-white">WELCOME!
                   <span class="text-white"><?php echo $_SESSION['full_name']; ?></span>
                 </h1>
+                <?php echo $success; ?>
               </div>
             </div>
           </div>
@@ -330,6 +345,14 @@
   <script src="../assets/vendor/headroom/headroom.min.js"></script>
   <!-- Argon JS -->
   <script src="../assets/js/argon.js?v=1.0.1"></script>
+
+  <script>
+        window.setTimeout(function() {
+    $(".alert").fadeTo(400, 0).slideUp(400, function(){
+        $(this).remove(); 
+    });
+}, 4000);
+    </script>
 </body>
 
 </html>

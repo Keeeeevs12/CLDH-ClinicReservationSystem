@@ -1,3 +1,63 @@
+<?php
+    session_start();
+	
+	include '../sms/SMS.php';
+	include '../admin/includes/unauth.php';
+    include '../admin/includes/dbconnection.php';
+
+	auth_user();
+	
+	$sms = new SMS();
+	
+	if(!$_SESSION['status'] == '1') {
+		header("Location: ../verification.php");
+	}
+	
+	$user_name = $_SESSION['full_name'];
+	$user_id = $_SESSION['patients_id'];
+	$user_phone = $_SESSION['contact_num'];
+	
+	$query_app = mysqli_query($con,"SELECT * FROM appointments WHERE patients_id = '$user_id'");
+	$rows_app = mysqli_fetch_assoc($query_app);
+
+    if (isset($_POST['logout'])) {
+        session_unset();
+        session_destroy();
+        header("Location: http://www.cldhclinicreservation.epizy.com/login.php");
+    }
+	
+	if (isset($_POST['can_app'])) {
+        $can_id = $_POST['can_id'];
+        $result = mysqli_query($con, "SELECT * FROM appointments 
+										LEFT JOIN users ON appointments.patients_id = users.patients_id 
+										LEFT JOIN schedules ON appointments.sched_id = schedules.sched_id
+										LEFT JOIN sec_accnts ON appointments.sec_id = sec_accnts.sec_id
+											WHERE appointments.app_id = '$can_id'");
+        $rows = mysqli_fetch_assoc($result);
+		$sched_id = $rows['sched_id'];
+		$docName = $rows['doc_name'];
+		
+        if ($query = mysqli_query($con, "UPDATE appointments SET status = '4' WHERE appointments.app_id = '$can_id'")){
+    
+			$isSendSuccessfuly = $sms->sendSMS(array(
+				"number"=>"$user_phone",
+				"message"=>"You have cancelled your appointment with Dr. ".$docName."."
+			));
+	
+            $transac_mes = $user_name . ' has cancelled his/her appointment.';
+            $query1 = mysqli_query($con, "UPDATE schedules SET status = '0' WHERE sched_id = '$sched_id'");
+            $query = mysqli_query($con, "INSERT INTO transacs (transac_datetime, transac_mes, transac_user, user_type) VALUES (current_timestamp(), '$transac_mes', '$user_name', 'Client/Patient')");
+        }
+        $success = '<div class="alert alert-success alert-dismissible fade show" role="alert" >
+                            <span class="alert-inner--icon"><i class="ni ni-check-bold"></i></span>
+                                <span class="alert-inner--text">The appointment has been <strong>SUCCESSFULLY</strong> canceled.</span>
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>';
+    }
+?>
+
 <!DOCTYPE html>
 <html>
 
@@ -38,7 +98,7 @@
         <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
           <div class="container">
             <a class="navbar-brand js-scroll-trigger mr-lg-5" href="#page-top">
-              <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
+              <p class="text-white" style="font-weight: bold; font-size: 30px;"><img src="../assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
             </a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
@@ -48,7 +108,7 @@
                 <div class="row">
                   <div class="col-6 collapse-brand">
                     <a href="./client-index.html">
-                      <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
+                      <p class="text-primary" style="font-weight: bold; font-size: 30px;"><img src="../assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
                     </a>
                   </div>
                   <div class="col-6 collapse-close">
@@ -67,7 +127,7 @@
                           <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="./my-appointments.html">My Appointments</a>
+                          <a class="nav-link js-scroll-trigger" href="./my-appointments.php">My Appointments</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -93,7 +153,7 @@
                           <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
                       </li>
                       <li class="nav-item">
-                          <a class="nav-link js-scroll-trigger" href="./my-appointments.html">My Appointments</a>
+                          <a class="nav-link js-scroll-trigger" href="./my-appointments.php">My Appointments</a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -124,8 +184,8 @@
           <div class="col px-0">
             <div class="row">
               <div class="col-lg-8">
-                <h1 class="display-3  text-white">
-                  WELCOME!
+                <h1 class="display-3  text-white">WELCOME!
+				<span class="text-white"><?php echo $_SESSION['full_name']; ?></span>
                 </h1>
                 <p class="lead  text-white">This is where you can see your transaction history.</p>
               </div>
@@ -164,7 +224,7 @@
                       <tr>
                         <th scope="col">Transaction Date</th>
                         <th scope="col">Doctor's Name</th>
-                        <th scope="col">Date</th>
+                        <th scope="col">Day</th>
                         <th scope="col">From</th>
                         <th scope="col">To</th>
                         <th scope="col">Room</th>
@@ -173,36 +233,46 @@
                       </tr>
                     </thead>
                     <tbody>
+					<?php
+						$query_fetchapp = mysqli_query($con, "SELECT transacs.transac_datetime, appointments.app_id, appointments.status, sec_accnts.doc_name, schedules.start_time, schedules.day, schedules.end_time, schedules.room FROM appointments 
+																LEFT JOIN sec_accnts ON appointments.sec_id = sec_accnts.sec_id 
+																LEFT JOIN schedules ON appointments.sched_id = schedules.sched_id 
+																LEFT JOIN users ON appointments.patients_id = users.patients_id 
+																LEFT JOIN transacs ON appointments.app_id = transacs.app_id 
+																	WHERE appointments.patients_id = '$user_id'");
+						while ($rows_fetchapp = mysqli_fetch_assoc($query_fetchapp)) {
+					?>
                       <tr>
                         <td>
-                            
+                            <?php echo $rows_fetchapp['transac_datetime']; ?>
                         </td>
                         <td>
-                      
+							<?php echo $rows_fetchapp['doc_name']; ?>
                         </td>
                         <td>
-                  
+							<?php echo $rows_fetchapp['day']; ?>
                         </td>
                         <td>
-                    
+							<?php echo $rows_fetchapp['start_time']; ?>
                        </td>
                         <td>
-                 
+							<?php echo $rows_fetchapp['end_time']; ?>
                         </td>
                         <td>
-           
+							<?php echo $rows_fetchapp['room']; ?>
                         </td>
                         <td>
-                            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancel">Cancel Appoinment</button>
+                            <button type="button" onclick="test(this.id)" id="<?php echo $rows_fetchapp['app_id']; ?>" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#cancel" <?php if ($rows_fetchapp['status']!='0'){ echo 'disabled';}?>>Cancel Appoinment</button>
                         </td>
                         <td>
-                            <span class="badge badge-pill badge-danger">Declined</span>
-                            <span class="badge badge-pill badge-success">Confirmed</span>
-                            <span class="badge badge-pill badge-warning">Canceled</span>
-                            <span class="badge badge-pill badge-default">Pending</span>
+                            <?php if ($rows_fetchapp['status']=='3'){?><span class="badge badge-pill badge-danger">Declined</span><?php } ?>
+                            <?php if ($rows_fetchapp['status']=='1'){?><span class="badge badge-pill badge-success">Confirmed</span><?php } ?>
+                            <?php if ($rows_fetchapp['status']=='2'){?><span class="badge badge-pill badge-success">Done</span><?php } ?>
+                            <?php if ($rows_fetchapp['status']=='4'){?><span class="badge badge-pill badge-warning">Canceled</span><?php } ?>
+                            <?php if ($rows_fetchapp['status']=='0'){?><span class="badge badge-pill badge-default">Pending</span><?php } ?>
                         </td>
                       </tr>
-                      </tr>
+						<?php } ?>
                     </tbody>
                   </table>
               </div>
@@ -228,10 +298,13 @@
             <div class="modal-body">
               Are you sure you want to <strong class="text-danger">CANCEL</strong> your appointment?
             </div>
+            <form method="post" action="">
             <div class="modal-footer">
+              <input type="hidden" id="can_id" name="can_id" value=""/>
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-              <button type="button" class="btn btn-primary">Yes</button>
+              <button type="submit" name="can_app" class="btn btn-primary">Yes</button>
             </div>
+			</form>
           </div>
         </div>
       </div>
@@ -294,6 +367,10 @@
         $('#back-to-top').tooltip('show');
 
 });
+
+function test(clickedID){
+        document.getElementById("can_id").value = clickedID;
+    }
 
 function myFunction() {
     var input, filter, cards, cardContainer, h6, title, i;

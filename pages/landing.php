@@ -4,15 +4,15 @@
     include '../admin/includes/dbconnection.php';
 
 	auth_user();
-	
+
 	if(!$_SESSION['status'] == '1') {
-		header("Location: verify.php");
+		header("Location: ../verification.php");
 	}
-	
+
     if (isset($_POST['logout'])) {
         session_unset();
         session_destroy();
-        header("Location: ../login.php");
+        header("Location: http://www.cldhclinicreservation.epizy.com/login.php");
     }
 ?>
 <!DOCTYPE html>
@@ -55,7 +55,7 @@
     <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
       <div class="container">
         <a class="navbar-brand js-scroll-trigger mr-lg-5" href="#page-top">
-          <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
+          <p class="text-white" style="font-weight: bold; font-size: 30px;"><img src="../assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -65,7 +65,7 @@
             <div class="row">
               <div class="col-6 collapse-brand">
                 <a href="./client-index.html">
-                  <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
+                  <p class="text-primary" style="font-weight: bold; font-size: 30px;"><img src="../assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
                 </a>
               </div>
               <div class="col-6 collapse-close">
@@ -82,6 +82,12 @@
                       </li>
                       <li class="nav-item">
                           <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link js-scroll-trigger" href="./my-appointments.php">My Appointments</a>
+                      </li>
+                      <li class="nav-item">
+                          <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
                       </li>
                       <li class="nav-item">
                           <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -105,6 +111,9 @@
               </li>
               <li class="nav-item">
                   <a class="nav-link js-scroll-trigger" href="./profile.php">Profile</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link js-scroll-trigger" href="./my-appointments.php">My Appointments</a>
               </li>
               <li class="nav-item">
                   <a class="nav-link" ><button name="logout" class="btn btn-1 btn-outline-info" type="submit">Logout</button></a>
@@ -184,7 +193,7 @@
                   while ($rows = mysqli_fetch_assoc($query)) {
                   ?>
                 <div class="col-lg-4 pb-20">
-                  <div class="card card-lift--hover shadow border-0">
+                  <div class="card card-lift--hover shadow border-0 align-items-center">
                     <div class="card-body py-5 text-center">
                         <div class="icon icon-lg icon-shape icon-shape-primary shadow rounded-circle mb-5">
                             <i class="ni ni-calendar-grid-58" aria-hidden="true"></i>
@@ -363,7 +372,7 @@
             </div>
           </section>
 
-          <section class="section pb-0 bg-gradient-warning">
+          <section class="section pb-0 bg-gradient-default">
             <div class="container">
               <div class="row row-grid align-items-center">
                 <div class="col-md-6 order-lg-2 ml-lg-auto">
@@ -383,12 +392,12 @@
                     <div class="card-body">
                       <div class="d-flex px-3">
                         <div>
-                          <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                          <div class="icon icon-shape bg-gradient-default rounded-circle text-white">
                             <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
                           </div>
                         </div>
                         <div class="pl-4">
-                          <h5 class="title text-warning">Our Mission</h5>
+                          <h5 class="title text-primary">Our Mission</h5>
                           <p>To provide superior personalized medical services with compassion to the community.</p>
                         </div>
                       </div>
@@ -398,12 +407,12 @@
                     <div class="card-body">
                       <div class="d-flex px-3">
                         <div>
-                          <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                          <div class="icon icon-shape bg-gradient-default rounded-circle text-white">
                             <i class="fa fa-eye" aria-hidden="true"></i>
                           </div>
                         </div>
                         <div class="pl-4">
-                          <h5 class="title text-warning">Our Vision</h5>
+                          <h5 class="title text-primary">Our Vision</h5>
                           <p>The leading medical center providing excellent patient experience, medical training and research in Central Luzon.</p>
                         </div>
                       </div>

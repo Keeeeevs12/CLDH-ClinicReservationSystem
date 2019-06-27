@@ -1,6 +1,7 @@
 <?php
     session_start();
     include 'admin/includes/auth.php';
+    include 'admin/includes/dbconnection.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -39,7 +40,7 @@
     <nav id="navbar-main" class="navbar navbar-main navbar-expand-lg navbar-transparent navbar-light headroom">
       <div class="container">
         <a class="navbar-brand js-scroll-trigger mr-lg-5" href="#page-top">
-          <p class="text-white" style="font-weight: bold; font-size: 30px;">CLDH</p>
+          <p class="text-white" style="font-weight: bold; font-size: 30px;"><img src="./assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global" aria-controls="navbar_global" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
@@ -49,7 +50,7 @@
             <div class="row">
               <div class="col-6 collapse-brand">
                 <a href="index.php">
-                  <p class="text-primary" style="font-weight: bold; font-size: 30px;">CLDH</p>
+                  <p class="text-primary" style="font-weight: bold; font-size: 30px;"><img src="./assets/img/brand/logocldh-1.png" style="height: 50px; width: 50px;"> CLDH</p>
                 </a>
               </div>
               <div class="col-6 collapse-close">
@@ -154,7 +155,7 @@
       <div class="container">
         <div class="row justify-content-center">
           <div class="col-lg-12">
-            <div class="card bg-gradient-warning shadow-lg border-0">
+            <div class="card bg-gradient-default shadow-lg border-0">
               <div class="p-5">
                 <div class="row align-items-center">
                   <div class="col-lg-10">
@@ -375,50 +376,7 @@
 
     <!-- About Us -->
 
-    <section class="section section-shaped" id="about">
-        <div class="shape shape-style-1 shape-default">
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-        <div class="container py-md">
-          <div class="row justify-content-between align-items-center">
-            <div class="col-lg-5 mb-5 mb-lg-0">
-              <h1 class="text-white font-weight-bold">MedArt History</h1>
-              <p class="lead text-white mt-4">Central Luzon Doctors' Hospital is a private 175-bed tertiary-level training hospital located along Hospital Drive, Barangay San Vicente, Tarlac City, Tarlac, Philippines. CLDH is accredited by the Department of Health (DOH) and by the Philippine Health Insurance Corporation (PhilHealth).
-                 CLDH is a proud member of the Private Hospitals Association of the Philippines (PHAP) and the Philippine Hospital Association (PHA), and recently the Institute for Healthcare Improvement (IHI).</p>
-            </div>
-            <div class="col-lg-6 mb-lg-auto">
-              <div class="rounded shadow-lg overflow-hidden transform-perspective-right">
-                <div id="carousel_example" class="carousel slide" data-ride="carousel">
-                  <ol class="carousel-indicators">
-                    <li data-target="#carousel_example" data-slide-to="0" class="active"></li>
-                    <li data-target="#carousel_example" data-slide-to="1"></li>
-                  </ol>
-                  <div class="carousel-inner">
-                    <div class="carousel-item active">
-                      <img class="img-fluid" src="./assets/img/theme/history.png" alt="First slide">
-                    </div>
-                  </div>
-                  <a class="carousel-control-prev" href="#carousel_example" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
-                  </a>
-                  <a class="carousel-control-next" href="#carousel_example" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        </section>
-
-        <section class="section bg-secondary">
+        <section class="section bg-secondary" id="about">
             <div class="container">
               <div class="row row-grid align-items-center">
                 <div class="col-md-6">
@@ -453,7 +411,7 @@
             </div>
           </section>
 
-          <section class="section pb-0 bg-gradient-warning">
+          <section class="section pb-0 bg-gradient-primary">
             <div class="container">
               <div class="row row-grid align-items-center">
                 <div class="col-md-6 order-lg-2 ml-lg-auto">
@@ -473,12 +431,12 @@
                     <div class="card-body">
                       <div class="d-flex px-3">
                         <div>
-                          <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                          <div class="icon icon-shape bg-gradient-default rounded-circle text-white">
                             <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
                           </div>
                         </div>
                         <div class="pl-4">
-                          <h5 class="title text-warning">Our Mission</h5>
+                          <h5 class="title text-primary">Our Mission</h5>
                           <p>To provide superior personalized medical services with compassion to the community.</p>
                         </div>
                       </div>
@@ -488,12 +446,12 @@
                     <div class="card-body">
                       <div class="d-flex px-3">
                         <div>
-                          <div class="icon icon-shape bg-gradient-warning rounded-circle text-white">
+                          <div class="icon icon-shape bg-gradient-default rounded-circle text-white">
                             <i class="fa fa-eye" aria-hidden="true"></i>
                           </div>
                         </div>
                         <div class="pl-4">
-                          <h5 class="title text-warning">Our Vision</h5>
+                          <h5 class="title text-primary">Our Vision</h5>
                           <p>The leading medical center providing excellent patient experience, medical training and research in Central Luzon.</p>
                         </div>
                       </div>
